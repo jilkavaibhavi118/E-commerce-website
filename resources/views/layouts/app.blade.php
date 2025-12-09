@@ -11,24 +11,29 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Vite CSS/JS -->
+    <!-- Vite CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Global CSS -->
+    <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <!-- Sweetalert CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
-    <!-- Page-specific CSS -->
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     @stack('css')
 </head>
+
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
 
-        <!-- Navigation -->
         @include('layouts.navigation')
 
-        <!-- Page Heading -->
         @isset($header)
             <header class="bg-white shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -37,7 +42,6 @@
             </header>
         @endisset
 
-        <!-- Page Content -->
         <div class="content-body px-4 py-6 max-w-7xl mx-auto">
             @yield('content')
         </div>
@@ -48,8 +52,11 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
-        // SweetAlert helpers
+        // Global Sweetalert Helpers
         function showSuccessToast(message) {
             Swal.fire({
                 toast: true,
@@ -79,9 +86,13 @@
         }
     </script>
 
+    <!-- CRUD Ajax (delete / mass delete) -->
     @include('layouts.crud_ajax')
 
-    <!-- Page-specific JS -->
+    <!-- Select2 + Category → Subcategory AJAX -->
+    @include('layouts.select2_ajax')
+
+    @yield('scripts')
     @stack('js')
 </body>
 </html>

@@ -28,6 +28,27 @@
                         {{ __('Sub Categories') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                        {{ __('Products') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('brands.index')" :active="request()->routeIs('brands.*')">
+                        {{ __('Brands') }}
+                    </x-nav-link>
+
+                     <x-nav-link :href="route('coupons.index')" :active="request()->routeIs('coupons.*')">
+                        {{ __('Coupons') }}
+                    </x-nav-link>
+
+                      <x-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
+                        {{ __('Customers') }}
+                    </x-nav-link>
+
+                   <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
+                        {{ __('Orders') }}
+                    </x-nav-link>
+
+
 
 
                 </div>

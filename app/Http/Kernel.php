@@ -19,9 +19,15 @@ use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Routing\Middleware\ValidateSignature as IlluminateValidateSignature;
 
 /* ----- spatie middleware ----- */
-use Spatie\Permission\Middlewares\RoleMiddleware;
-use Spatie\Permission\Middlewares\PermissionMiddleware;
-use Spatie\Permission\Middlewares\RoleOrPermissionMiddleware;
+// use Spatie\Permission\Middlewares\RoleMiddleware;
+// use Spatie\Permission\Middlewares\PermissionMiddleware;
+// use Spatie\Permission\Middlewares\RoleOrPermissionMiddleware;
+
+use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\PermissionMiddleware;
+use App\Http\Middleware\RoleOrPermissionMiddleware; // if you created custom versions
+
+
 
 /* ----- your custom middleware (if exists) ----- */
 use App\Http\Middleware\Backend;
@@ -46,9 +52,11 @@ class Kernel extends HttpKernel
         // Spatie permission middlewares
         // Spatie
         // your other middleware
-        'role' => \App\Http\Middleware\RoleMiddleware::class,
-        'permission' => \App\Http\Middleware\PermissionMiddleware::class,
-        'role_or_permission' => \App\Http\Middleware\RoleOrPermissionMiddleware::class,
+      'role' => RoleMiddleware::class,
+      'permission' => PermissionMiddleware::class,
+      'role_or_permission' => RoleOrPermissionMiddleware::class,
+
+
 
         // application custom alias (if you have Backend middleware)
         'backend' => Backend::class,
