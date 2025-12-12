@@ -1,76 +1,96 @@
-@extends('layouts.app')
+@extends('frontend.layouts.app')
 
-@section('title', 'My Dashboard')
+@section('title', 'Customer Dashboard')
 
 @section('content')
-<div class="max-w-5xl mx-auto p-6">
 
-    <!-- PAGE TITLE -->
-    <h2 class="text-2xl font-semibold mb-6">My Dashboard</h2>
+<!-- ==================== HERO AUTO SLIDER ==================== -->
+<div
+    x-data="{
+        current: 0,
+        images: [
+            '{{ asset('images/slider/slider1.jpg') }}',
+            '{{ asset('images/slider/slider2.jpg') }}',
+            '{{ asset('images/slider/slider3.avif') }}'
+        ],
+        interval: null,
+        start() {
+            this.interval = setInterval(() => {
+                this.current = (this.current + 1) % this.images.length;
+            }, 3000);
+        }
+    }"
+    x-init="start()"
+    class="relative w-full h-[420px] overflow-hidden"
+>
+    <!-- Slider Images -->
+    <template x-for="(image, index) in images" :key="index">
+        <img
+            x-show="current === index"
+            x-transition.opacity
+            :src="image"
+            class="absolute inset-0 w-full h-full object-cover"
+        />
+    </template>
+</div>
 
-    <!-- TOP CARDS -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-        <!-- ORDERS -->
-        <a href="{{ route('user.orders.index') }}"
-           class="bg-white border rounded-lg p-6 shadow hover:shadow-lg transition block">
-            <h3 class="text-lg font-semibold mb-2">My Orders</h3>
-            <p class="text-gray-600">View all your orders & status updates.</p>
-        </a>
+<h2 class="text-3xl font-bold mb-6">Products</h2>
 
-        <!-- CART -->
-        <a href="{{ route('cart.index') }}"
-           class="bg-white border rounded-lg p-6 shadow hover:shadow-lg transition block">
-            <h3 class="text-lg font-semibold mb-2">My Cart</h3>
-            <p class="text-gray-600">Check and manage your shopping cart.</p>
-        </a>
+<!-- PRODUCT GRID -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    @foreach($products as $product)
+        @php
+            $image = $product->images->first()->image_path ?? null;
+        @endphp
+
+        <div class="bg-white p-4 rounded-xl shadow hover:shadow-lg transition duration-200">
+
+            <!-- IMAGE -->
+            <img src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/400x250?text=No+Image' }}"
+                 alt="{{ $product->name }}"
+                 class="w-full h-48 object-cover rounded-lg mb-3">
+
+            <!-- NAME -->
+            <h3 class="font-semibold text-lg">{{ $product->name }}</h3>
+
+            <!-- PRICE -->
+            <p class="text-gray-600 mt-1">₹{{ number_format($product->price, 2) }}</p>
+
+            <!-- ACTIONS -->
+            <div class="mt-4 flex justify-between items-center">
+
+                <!-- ADD TO CART -->
+                <button type="button"
+                class="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 add-to-cart-btn"
+                data-id="{{ $product->id }}">
+                Add to Cart
+            </button>
 
 
-    </div>
+                <!-- ADD TO WISHLIST -->
+                <form action="{{ route('wishlist.add') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
 
-    <!-- ACCOUNT INFO CARD -->
-    <div class="bg-white border rounded-lg shadow p-6 mb-8">
-        <h3 class="text-xl font-semibold mb-4">Account Information</h3>
+                    <button type="submit">
+                        <i data-feather="heart"
+                           class="w-6 h-6 text-red-500 hover:text-red-600"></i>
+                    </button>
+                </form>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-            <div>
-                <p class="text-sm text-gray-600 mb-1">Name</p>
-                <p class="font-medium">{{ auth()->user()->name }}</p>
             </div>
 
-            <div>
-                <p class="text-sm text-gray-600 mb-1">Email</p>
-                <p class="font-medium">{{ auth()->user()->email }}</p>
-            </div>
-
-            <div>
-                <p class="text-sm text-gray-600 mb-1">Phone</p>
-                <p class="font-medium">{{ auth()->user()->phone ?? 'Not added' }}</p>
-            </div>
-
-            <div>
-                <p class="text-sm text-gray-600 mb-1">Status</p>
-                <span class="px-3 py-1 text-sm rounded text-white
-                    {{ auth()->user()->status == 1 ? 'bg-green-600' : 'bg-red-600' }}">
-                    {{ auth()->user()->status == 1 ? 'Active' : 'Inactive' }}
-                </span>
-            </div>
+            <!-- VIEW DETAILS BUTTON -->
+            <a href="{{ route('product.details', $product->id) }}"
+               class="block text-center mt-3 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                View Details
+            </a>
 
         </div>
-    </div>
-
-    <!-- QUICK LINKS -->
-    <div class="bg-white border rounded-lg shadow p-6">
-        <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
-
-        <ul class="space-y-3 text-blue-600">
-            <li><a href="{{ route('cart.index') }}" class="hover:underline">Go to Cart</a></li>
-            <li><a href="{{ route('user.orders.index') }}" class="hover:underline">View My Orders</a></li>
-           
-            <li><a href="{{ route('dashboard') }}" class="hover:underline">Return to Homepage</a></li>
-        </ul>
-    </div>
+    @endforeach
 
 </div>
+
 @endsection

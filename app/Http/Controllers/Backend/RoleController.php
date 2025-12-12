@@ -45,7 +45,7 @@ class RoleController extends Controller
         abort_if(!auth()->user()->can('roles.view'), 403);
         $role = Role::findOrFail($id);
         $permissions = $role->permissions;
-        return view('backend.roles.view', compact('role', 'permissions'));
+        return view('backend.roles.show', compact('role', 'permissions'));
     }
 
     public function edit($id)

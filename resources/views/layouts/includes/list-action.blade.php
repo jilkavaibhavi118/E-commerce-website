@@ -20,6 +20,19 @@
         </a>
     @endcan
 
+
+    @php
+        // Fix route prefix ONLY for orders
+        // if ($module == "orders") {
+        //     $module2 = "admin.orders";
+        // } else {
+        //     $module2 = $module2 ?? $module;
+        // }
+    @endphp
+
+
+
+
     {{-- ONLY FOR ROLES --}}
     @if($module == "roles")
         @can('roles.permissions')
@@ -31,12 +44,8 @@
 
     {{-- DELETE --}}
     @can($module . '.delete')
-        <form action="{{ route($module2 . '.destroy', $data->id) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger btn-sm" title="Delete">
-                <i class="fa fa-trash"></i>
-            </button>
-        </form>
+        <a href="javascript:;" data-url="{{ route($module2 . '.destroy', $data->id) }}" class="btn btn-danger btn-sm delete-btn" title="Delete">
+            <i class="fa fa-trash"></i>
+        </a>
     @endcan
 </div>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller; 
+use App\Http\Controllers\Controller;
 use App\Models\Subcategory;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -38,8 +38,8 @@ class SubcategoryController extends Controller
                         'data' => $row,
                         'module' => 'subcategories'
                     ])->render();
-                    
-                    
+
+
                 })
                 ->rawColumns(['checkbox','status','action'])
                 ->make(true);
@@ -67,7 +67,7 @@ class SubcategoryController extends Controller
 
         Subcategory::create($data);
 
-        return redirect()->route('backend.subcategories.index')->with('success', 'Subcategory created successfully.');
+        return response()->json(['success' => 'SubCategory Added Successfully', 'url' => route('subcategories.index')]);
     }
 
     public function edit(Subcategory $subcategory)
@@ -127,5 +127,5 @@ class SubcategoryController extends Controller
             Subcategory::where('category_id', $category_id)->get()
         );
     }
-    
+
 }

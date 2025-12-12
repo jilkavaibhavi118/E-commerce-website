@@ -68,10 +68,16 @@ class CategoryController extends Controller
         return response()->json(['success' => 'Category updated Successfully', 'url' => route('categories.index')]);
     }
 
+    public function show(Category $categories)
+    {
+        return view('backend.categories.show', compact('categories'));
+    }
+
+
     public function destroy($id)
     {
         Category::findOrFail($id)->delete();
 
-        return response()->json(['status' => true]);
+        return response()->json(['message' => 'Category deleted successfully!']);
     }
 }

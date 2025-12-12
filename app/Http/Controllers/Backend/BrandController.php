@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller; 
+use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -122,7 +122,7 @@ class BrandController extends Controller
         $brand->status = $request->status;
         $brand->save();
 
-        
+
         return response()->json([
             'success' => 'Brand Updated successfully.',
             'url' => route('brands.index')
@@ -141,5 +141,18 @@ class BrandController extends Controller
         $brand->delete();
 
         return redirect()->route('brands.index')->with('success', 'Brand deleted successfully');
+    }
+
+    public function getBrands(Request $request)
+    {
+        $search = $request->searchTerm;
+
+        $brand = Brand::select('id', 'name as text')
+        ->when($search, function($q) use ($search) {
+            $q->where('name', 'LIKE', "%{$search}%");
+        })
+        ->get();
+        return response()->json($brand);
+
     }
 }

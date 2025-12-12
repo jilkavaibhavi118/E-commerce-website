@@ -39,6 +39,14 @@
             </select>
         </div>
 
+         <!-- Brand -->
+         <div class="mb-3">
+            <label class="font-semibold">Brand</label>
+            <select id="brand_id" name="brand_id" class="select2 w-full">
+                <option value="">Select Brand</option>
+            </select>
+        </div>
+
         <!-- Product Description -->
 <div class="mb-3">
     <label class="font-semibold">Description</label>
@@ -61,7 +69,7 @@
 
 </div>
 
-       
+
 
         <!-- SKU Table -->
         <h4 class="font-semibold mb-2">Product Variants</h4>
@@ -120,12 +128,32 @@ $(document).ready(function() {
             });
 
             $('#subcategory_id').html(html);
-            
+
             // Reinitialize Select2
             $('#subcategory_id').select2();
 
         });
+
+
     });
+
+     // brand dropdown
+     $('#brand_id').select2({
+            placeholder: 'Select Brand',
+            allowClear: true,
+            ajax: {
+                url: '{{ route("brands.select2") }}',
+                type: 'GET',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return { searchTerm: params.term };
+                },
+                processResults: function(data) {
+                    return { results: data };
+                }
+            }
+        });
 
     // SKU row add
     let rowIndex = 1;

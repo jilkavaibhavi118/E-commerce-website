@@ -9,10 +9,14 @@ use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CustomerController;
-use App\Http\Controllers\Backend\CartController;
-use App\Http\Controllers\Backend\CheckoutController;
 use App\Http\Controllers\Backend\AdminOrderController;
+use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\OrderController as CustomerOrderController;
+use App\Http\Controllers\Frontend\DashboardController;
+use App\Http\Controllers\Frontend\WishlistController;
+use App\Http\Controllers\Frontend\ProductsController;
+use App\Http\Controllers\Frontend\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,9 +28,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/admin/dashboard', function () {
+        return view('dashboard');
+    })->middleware(['auth', 'verified'])->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {
@@ -95,6 +99,64 @@ Route::group(['middleware' => ['can:customers.view']], function () {
         ->except(['view']);
 });
 
+
+Route::middleware(['auth', 'can:orders.view'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // All CRUD routes for orders
+        Route::resource('orders', AdminOrderController::class);
+
+        // Update order status
+        Route::post('/orders/{order}/status',
+            [AdminOrderController::class, 'updateStatus']
+        )->name('orders.updateStatus');
+});
+
+
+
+Route::get('/get-brands', [BrandController::class, 'getBrands'])->name('brands.select2');
+
+
+//============================================Frontend Routes================================================
+
+
+// FRONTEND USER DASHBOARD
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user/dashboard', [DashboardController::class, 'index'])
+         ->name('frontend.dashboard');
+});
+
+
+Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+Route::post('/wishlist/remove', [WishlistController::class, 'remove'])->name('wishlist.remove');
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+
+// List all orders
+Route::get('/customer/orders', [CustomerOrderController::class, 'index'])
+    ->name('frontend.orders.index')
+    ->middleware('auth');
+
+// Show single order
+Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])
+    ->name('orders.show')
+    ->middleware('auth');
+Route::get('/orders/{order}/invoice', [CustomerOrderController::class, 'invoice'])
+    ->name('frontend.orders.invoice');
+
+Route::get('/orders/{order}/feedback', [CustomerOrderController::class, 'feedbackForm'])
+    ->name('frontend.orders.feedback');
+
+Route::post('/orders/{order}/feedback', [CustomerOrderController::class, 'submitFeedback'])
+    ->name('frontend.orders.feedback.submit');
+
+Route::get('/orders/{order}/review', [CustomerOrderController::class, 'reviewForm'])
+    ->name('frontend.orders.review');
+
+Route::post('/orders/{order}/review', [CustomerOrderController::class, 'submitReview'])
+    ->name('frontend.orders.review.submit');
+
 Route::middleware('auth')->group(function () {
 
     // CART
@@ -111,39 +173,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
 });
 
-Route::get('/dashboard', function () {
-    return view('frontend.dashboard');
-})->middleware('auth')->name('user.dashboard');
+Route::get('/product/{id}', [ProductsController::class, 'show'])
+    ->name('product.details');
 
-Route::get('/dashboard', function () {
-    return view('frontend.dashboard');
-})->middleware('auth')->name('user.dashboard');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
-
-Route::middleware(['auth', 'can:orders.view'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-
-        // All CRUD routes for orders
-        Route::resource('orders', AdminOrderController::class);
-
-        // Update order status
-        Route::post('/orders/{order}/status', 
-            [AdminOrderController::class, 'updateStatus']
-        )->name('orders.updateStatus');
-});
-
-Route::middleware('auth')
-    ->prefix('orders')
-    ->name('user.orders.')
-    ->group(function () {
-
-        Route::get('/', [CustomerOrderController::class, 'index'])
-            ->name('index');
-
-        Route::get('/{order}', [CustomerOrderController::class, 'show'])
-            ->name('show');
-});
 
 require __DIR__.'/auth.php';

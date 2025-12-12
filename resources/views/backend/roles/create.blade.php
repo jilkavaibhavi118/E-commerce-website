@@ -6,7 +6,7 @@
     <div class="bg-white shadow rounded-lg p-6 border">
         <h2 class="text-xl font-semibold mb-4">Add Roles</h2>
 
-        <form action="{{ route('categories.store') }}" method="POST">
+        <form action="{{ route('roles.store') }}" method="POST" id="crudForm">
             @csrf
 
             {{-- Category Name --}}

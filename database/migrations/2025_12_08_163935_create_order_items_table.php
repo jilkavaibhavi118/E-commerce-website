@@ -1,27 +1,28 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Models;
 
-return new class extends Migration
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class OrderItem extends Model
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    use HasFactory;
+
+    protected $fillable = [
+        'order_id',
+        'product_id',
+        'quantity',
+        'price',
+    ];
+
+    public function order()
     {
-        Schema::create('order_items', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        return $this->belongsTo(Order::class);
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function product()
     {
-        Schema::dropIfExists('order_items');
+        return $this->belongsTo(Product::class);
     }
-};
+}

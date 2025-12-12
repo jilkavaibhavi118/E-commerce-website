@@ -3,54 +3,72 @@
 @section('title', 'Manage Orders')
 
 @section('content')
-<div class="container mx-auto p-6">
-    <h2 class="text-2xl font-semibold mb-6">Orders</h2>
+<style>
+    /* styles */
+    .custom-card { background:#ffffff; border-radius:10px; padding:0; box-shadow:0px 4px 12px rgba(0,0,0,0.08); overflow:hidden; }
+    .custom-card-header { padding:18px 22px; background:#f8f9fc; border-bottom:1px solid #e9ecef; display:flex; justify-content:space-between; align-items:center; }
+    .custom-card-header h4 { margin:0; font-size:18px; font-weight:600; }
+    .add-btn { background:#4e73df; color:#fff; padding:8px 14px; font-size:13px; font-weight:600; border-radius:6px; text-decoration:none; transition:0.2s ease-in-out; }
+    .add-btn:hover { background:#3558c7; color:#fff; }
+    table.dataTable { border-collapse: collapse !important; width: 100% !important; }
+    table.dataTable th { background: #f1f3f9; font-size: 13px; padding: 10px; text-transform: uppercase; letter-spacing: .5px; }
+    table.dataTable td { padding: 10px; font-size: 14px; }
+    @media(max-width: 768px) { .custom-card-header { flex-direction: column; align-items: flex-start; gap: 10px; } }
+</style>
 
-    <div class="bg-white p-6 rounded shadow border">
-        <table class="w-full">
-            <thead>
-            <tr class="bg-gray-100 border-b">
-                <th class="p-2">Order ID</th>
-                <th class="p-2">Customer</th>
-                <th class="p-2">Total</th>
-                <th class="p-2">Status</th>
-                <th class="p-2">Date</th>
-                <th class="p-2">Action</th>
-            </tr>
-            </thead>
+<div class="container-fluid">
+    <div class="col-12">
+        <div class="custom-card">
+            <div class="custom-card-header">
+                <h4>OrderList</h4>
+            </div>
 
-            <tbody>
-            @foreach($orders as $order)
-                <tr class="border-b">
-                    <td class="p-2">#{{ $order->id }}</td>
-                    <td class="p-2">{{ $order->name }}</td>
-                    <td class="p-2">₹{{ $order->total }}</td>
-                    <td class="p-2">
-                        <span class="px-3 py-1 text-sm rounded text-white 
-                            @if($order->status=='pending') bg-yellow-600
-                            @elseif($order->status=='processing') bg-blue-600
-                            @elseif($order->status=='shipped') bg-purple-600
-                            @elseif($order->status=='delivered') bg-green-600
-                            @else bg-red-600 @endif">
-                            {{ ucfirst($order->status) }}
-                        </span>
-                    </td>
-                    <td class="p-2">{{ $order->created_at->format('d M, Y') }}</td>
-                    <td class="p-2">
-                        <a href="{{ route('orders.show', $order->id) }}" class="text-blue-600">View</a>
-                        |
-                        <a href="{{ route('orders.edit', $order->id) }}" class="text-yellow-600">Edit</a>
-                        |
-                        <form action="{{ route('orders.destroy', $order->id) }}" method="POST" class="inline">
-                            @csrf @method('DELETE')
-                            <button onclick="return confirm('Delete order?')" class="text-red-600">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-
-        </table>
+            <div class="card-body p-3">
+                <div class="table-responsive">
+                    <table id="ordersTable" class="display" style="min-width: 100%; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Customer Id</th>
+                                <th>Product</th>
+                                <th>Total Amount</th>
+                                <th>Order Status</th>
+                                <th>Payment Status</th>
+                                <th>Address</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
+
+@section('scripts')
+<script>
+    $('#ordersTable').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: "{{ route('admin.orders.index') }}",
+    columns: [
+        { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+        { data: 'customer', name: 'customer' },
+        { data: 'product', name: 'product'},
+        { data: 'total_amount', name: 'total_amount'},
+        { data: 'order_status', name: 'order_status'},
+        { data: 'payment_status', name: 'payment_status' },
+        { data: 'address', name: 'address' },
+        { data: 'action', name: 'action' }
+    ]
+});
+
+
+</script>
+@endsection
+
+
+
+
+

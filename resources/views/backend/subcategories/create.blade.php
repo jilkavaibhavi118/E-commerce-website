@@ -20,8 +20,8 @@
                         </option>
                     @endforeach
                 </select>
-                @error('category_id') 
-                    <small class="text-red-500">{{ $message }}</small> 
+                @error('category_id')
+                    <small class="text-red-500">{{ $message }}</small>
                 @enderror
             </div>
 

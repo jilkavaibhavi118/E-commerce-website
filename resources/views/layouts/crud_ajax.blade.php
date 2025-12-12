@@ -38,39 +38,44 @@
         });
     });
 
-    $(document).on('click', '.deleteBtn', function (e) {
+    $(document).on('click', '.delete-btn', function (e) {
         e.preventDefault();
-        let btn = $(this);
 
-        showSwal({
+        let url = $(this).data('url');
+
+        Swal.fire({
             title: "Are you sure?",
-            text: "You won't be able to revert this!",
+            text: "This item will be permanently deleted!",
             icon: "warning",
-            confirmButtonText: "Yes, Delete it!",
-        }, function () {
-            let id = btn.data('id');
-            let URL = $('#delete-form-' + id).attr('action');
-            let formData = new FormData(document.getElementById('delete-form-' + id));
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
 
-            $.ajax({
-                type: 'DELETE',
-                url: URL,
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function (result) {
-                    showSuccessToast(result.success);
-                    if (result.url) {
-                        window.location.href = result.url;
-                    } else {
-                        datatable.ajax.reload();
+                $.ajax({
+                    url: url,
+                    type: "DELETE",
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: response.message,
+                            icon: "success",
+                        });
+
+                        // reload datatable
+                        $('#table').DataTable().ajax.reload();
                     }
-                },
-                error: function (err) {
-                    showErrorToast(err.responseJSON.error);
-                },
-            });
+                });
+
+            }
         });
+
     });
+
 </script>

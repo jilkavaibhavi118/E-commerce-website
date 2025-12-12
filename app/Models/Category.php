@@ -25,5 +25,5 @@ class Category extends Model
         });
     }
 
-    
+
 }

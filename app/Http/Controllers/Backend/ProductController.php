@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller; 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Product;
@@ -25,7 +25,7 @@ class ProductController extends Controller
                 ->addColumn('category', fn($row) => $row->category?->name ?? '—')
                 ->addColumn('subcategory', fn($row) => $row->subCategory?->name ?? '—')
 
-                // ⭐ SHOW MINIMUM SKU PRICE
+                // mininm
                 ->addColumn('price', function ($row) {
                     if ($row->skus->count()) {
                         return "₹ " . number_format($row->skus->min('price'), 2);
@@ -33,14 +33,14 @@ class ProductController extends Controller
                     return '—';
                 })
 
-                // ⭐ SHOW STATUS BADGES
+                // status
                 ->addColumn('status', fn($row) =>
                     $row->status == 1
                         ? '<span class="badge bg-success">Active</span>'
                         : '<span class="badge bg-danger">Inactive</span>'
                 )
 
-                // ⭐ SHOW FIRST IMAGE (optional)
+                // image
                 ->addColumn('image', function ($row) {
                     if ($row->images->count()) {
                         return '<img src="' . asset('storage/' . $row->images->first()->image_path) . '" width="60">';
@@ -118,7 +118,7 @@ class ProductController extends Controller
                 ];
             })->toArray());
 
-            // ⭐ MULTIPLE IMAGE UPLOAD
+            //  images
             if ($request->hasFile('images')) {
 
                 foreach ($request->file('images') as $img) {

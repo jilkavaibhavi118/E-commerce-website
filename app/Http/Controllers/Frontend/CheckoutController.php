@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\User;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\OrderCreatedNotification;
 
 class CheckoutController extends Controller
 {
@@ -21,7 +23,7 @@ class CheckoutController extends Controller
         }
 
         $subtotal = $cart->sum(fn ($item) =>
-            $item->product->selling_price * $item->quantity
+            $item->product->price * $item->quantity
         );
 
         $discount = session('discount', 0);
@@ -46,13 +48,13 @@ class CheckoutController extends Controller
         }
 
         $subtotal = $cart->sum(fn ($item) =>
-            $item->product->selling_price * $item->quantity
+            $item->product->price * $item->quantity
         );
 
         $discount = session('discount', 0);
         $total = $subtotal - $discount;
 
-        // CREATE ORDER
+         //CREATE ORDER
         $order = Order::create([
             'user_id'  => Auth::id(),
             'name'     => $request->name,
@@ -65,14 +67,23 @@ class CheckoutController extends Controller
             'status'   => 'pending',
         ]);
 
-        // SAVE ORDER ITEMS
+           // Notify the customer
+           auth()->user()->notify(new OrderCreatedNotification($order));
+
+               // Notify the admin
+              $admin = User::where('role', 'admin')->first();
+              if ($admin) {
+                  $admin->notify(new OrderCreatedNotification($order));
+              }
+
+        // SAVE THE ORDER
         foreach ($cart as $item) {
             OrderItem::create([
                 'order_id'  => $order->id,
                 'product_id'=> $item->product_id,
                 'quantity'  => $item->quantity,
-                'price'     => $item->product->selling_price,
-                'total'     => $item->product->selling_price * $item->quantity
+                'price'     => $item->product->price,
+                'total'     => $item->product->price * $item->quantity
             ]);
 
             // REDUCE STOCK

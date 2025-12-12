@@ -14,9 +14,13 @@
             </span>
         </p>
 
-        <a href="{{ route('subcategories.index') }}" class="btn btn-primary mt-3">
-            Back
-        </a>
+    <div class="flex justify-end gap-3 mt-5">
+        <a href="{{ route('subcategories.index') }}"
+                   class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition">
+                    Cancel
+                </a>
+    </div>
+
     </div>
 </div>
 @endsection

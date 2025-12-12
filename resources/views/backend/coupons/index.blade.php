@@ -4,7 +4,7 @@
 
 @section('content')
 <style>
-    /* Same styling as categories index */
+    /* styles */
     .custom-card { background:#ffffff; border-radius:10px; padding:0; box-shadow:0px 4px 12px rgba(0,0,0,0.08); overflow:hidden; }
     .custom-card-header { padding:18px 22px; background:#f8f9fc; border-bottom:1px solid #e9ecef; display:flex; justify-content:space-between; align-items:center; }
     .custom-card-header h4 { margin:0; font-size:18px; font-weight:600; }
